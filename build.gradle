@@ -1,0 +1,66 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.7.RELEASE'
+        springCloudVersion = "Greenwich.RELEASE"
+        gradleDockerVersion = "0.22.1"
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:${gradleDockerVersion}")
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.1.7.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    baseName = 'config-vault-server'
+    version = '0.0.1-SNAPSHOT'
+}
+
+group = 'br.ufma.services'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-starter-vault-config'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+eclipse {
+    classpath {
+        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    }
+}
+//# https://spring.io/guides/gs/vault-config/
